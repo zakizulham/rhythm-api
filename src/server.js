@@ -2,11 +2,13 @@
 import 'dotenv/config'; 
 import Hapi from '@hapi/hapi';
 import ClientError from './exceptions/ClientError.js';
+import Jwt from '@hapi/jwt';
 
 // Impor Plugin
 import albumsPlugin from './api/albums/index.js';
 import songsPlugin from './api/songs/index.js';
 import usersPlugin from './api/users/index.js';
+import authenticationsPlugin from './api/authentications/index.js';
 
 // Impor Service & Validator
 import AlbumsService from './services/postgres/AlbumsService.js';
@@ -14,13 +16,17 @@ import AlbumsValidator from './validators/albums/index.js';
 import SongsService from './services/postgres/SongsService.js'; 
 import SongsValidator from './validators/songs/index.js'; 
 import UsersService from './services/postgres/UsersService.js'; 
-import UsersValidator from './validators/users/index.js'; 
+import UsersValidator from './validators/users/index.js';
+import AuthenticationsService from './services/postgres/AuthenticationsService.js';
+import AuthenticationsValidator from './validators/authentications/index.js'; 
+import TokenManager from './tokenize/TokenManager.js';  
 
 const init = async () => {
   // Bikin instance service
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
   const usersService = new UsersService();
+  const authenticationsService = new AuthenticationsService();
 
   const server = Hapi.server({
     port: process.env.PORT || 5000,
@@ -66,6 +72,13 @@ const init = async () => {
     return h.continue;
   });
 
+  // Registrasi plugin eksternal Hapi/JWT
+  await server.register([
+    {
+      plugin: Jwt,
+    },
+  ]);
+
   // Daftar plugin albums
   await server.register([
   {
@@ -83,12 +96,21 @@ const init = async () => {
     },
   },
   { 
-      plugin: usersPlugin,
-      options: {
-        service: usersService,
-        validator: UsersValidator,
-      },
+    plugin: usersPlugin,
+    options: {
+      service: usersService,
+      validator: UsersValidator,
     },
+  },
+  { 
+    plugin: authenticationsPlugin,
+    options: {
+      authenticationsService,
+      usersService,
+      tokenManager: TokenManager,
+      validator: AuthenticationsValidator,
+    },
+  },
   ]);
 
   await server.start();
