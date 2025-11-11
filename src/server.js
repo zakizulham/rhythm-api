@@ -9,6 +9,7 @@ import albumsPlugin from './api/albums/index.js';
 import songsPlugin from './api/songs/index.js';
 import usersPlugin from './api/users/index.js';
 import authenticationsPlugin from './api/authentications/index.js';
+import playlistsPlugin from './api/playlists/index.js';
 
 // Impor Service & Validator
 import AlbumsService from './services/postgres/AlbumsService.js';
@@ -20,13 +21,18 @@ import UsersValidator from './validators/users/index.js';
 import AuthenticationsService from './services/postgres/AuthenticationsService.js';
 import AuthenticationsValidator from './validators/authentications/index.js'; 
 import TokenManager from './tokenize/TokenManager.js';  
+import PlaylistsService from './services/postgres/PlaylistsService.js'; 
+import PlaylistsValidator from './validators/playlists/index.js'; 
+import CollaborationsService from './services/postgres/CollaborationsService.js'; 
 
 const init = async () => {
   // Bikin instance service
+  const collaborationsService = new CollaborationsService();
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
+  const playlistsService = new PlaylistsService(collaborationsService);
 
   const server = Hapi.server({
     port: process.env.PORT || 5000,
@@ -79,6 +85,23 @@ const init = async () => {
     },
   ]);
 
+  // Definisikan strategi autentikasi JWT
+  server.auth.strategy('openmusic_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: 3600, // 1 jam
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id,
+      },
+    }),
+  });
+
   // Daftar plugin albums
   await server.register([
   {
@@ -109,6 +132,13 @@ const init = async () => {
       usersService,
       tokenManager: TokenManager,
       validator: AuthenticationsValidator,
+    },
+  },
+  {
+    plugin: playlistsPlugin,
+    options: {
+      service: playlistsService,
+      validator: PlaylistsValidator,
     },
   },
   ]);
