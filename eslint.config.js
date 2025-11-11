@@ -1,29 +1,29 @@
-import globals from "globals";
-import pluginjs from "@eslint/js";
-import airbnb from "eslint-plugin-import";
+// eslint.config.js
+import globals from 'globals';
+import pluginJs from '@eslint/js';
 
 export default [
-    { languageOptions: {globals: global.node } },
-    pluginJs.configs.recommended,
-    {
-        plugins: { import: pluginImport },
-        rules: {
-            ...airbnb.rules,
-            'no-console': 'off',
-            'no-unused-vars': 'warn',
-            'import/no-extraneous-dependencies': 'off',
-            'no-underscore-dangle': 'off',
-        },
-        settings: {
-            ...airbnb.settings,
-            'import/resolver': {
-                node: {
-                    extensions: [".js"],
-                },
-            },
-        },
+  // Terapin konfigurasi bawaan yang direkomendasiin
+  pluginJs.configs.recommended,
+  
+  // Konfigurasi spesifik buat proyek kita
+  {
+    languageOptions: {
+      ecmaVersion: 'latest', // Pake JavaScript versi terbaru
+      sourceType: 'module', // Pake ES Modules (import/export)
+      globals: {
+        ...globals.node, // Aktifin environment Node.js
+      },
     },
-    {
-        ignore: ["node_modules/", "eslint.config.js"]
+    rules: {
+      // Aturan yang kita longgarin
+      'no-console': 'off', // Boleh pake console.log
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^h$' }], // Kasih warning kalo ada variabel gak kepake, KECUALI 'h'
+      'no-underscore-dangle': 'off', // Boleh pake underscore di awal (cth: _service)
     },
+  },
+  {
+    // Abaikan folder node_modules
+    ignores: ['node_modules/'],
+  },
 ];
