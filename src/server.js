@@ -6,17 +6,21 @@ import ClientError from './exceptions/ClientError.js';
 // Impor Plugin
 import albumsPlugin from './api/albums/index.js';
 import songsPlugin from './api/songs/index.js';
+import usersPlugin from './api/users/index.js';
 
 // Impor Service & Validator
 import AlbumsService from './services/postgres/AlbumsService.js';
 import AlbumsValidator from './validators/albums/index.js';
 import SongsService from './services/postgres/SongsService.js'; 
 import SongsValidator from './validators/songs/index.js'; 
+import UsersService from './services/postgres/UsersService.js'; 
+import UsersValidator from './validators/users/index.js'; 
 
 const init = async () => {
   // Bikin instance service
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
+  const usersService = new UsersService();
 
   const server = Hapi.server({
     port: process.env.PORT || 5000,
@@ -62,7 +66,7 @@ const init = async () => {
     return h.continue;
   });
 
-  // Daftarin plugin albums
+  // Daftar plugin albums
   await server.register([
   {
     plugin: albumsPlugin,
@@ -78,6 +82,13 @@ const init = async () => {
       validator: SongsValidator,
     },
   },
+  { 
+      plugin: usersPlugin,
+      options: {
+        service: usersService,
+        validator: UsersValidator,
+      },
+    },
   ]);
 
   await server.start();
