@@ -18,7 +18,13 @@ export default [
     rules: {
       // Aturan yang kita longgarin
       'no-console': 'off', // Boleh pake console.log
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^h$' }], // Kasih warning kalo ada variabel gak kepake, KECUALI 'h'
+      'no-unused-vars': [
+        'warn',
+        {
+            argsIgnorePattern: '^h$', // Gak usah peduliin argumen 'h'
+            caughtErrorsIgnorePattern: '^_', // Gak usah peduliin error di catch yang diawalin _
+        },
+      ],
       'no-underscore-dangle': 'off', // Boleh pake underscore di awal (cth: _service)
     },
   },
