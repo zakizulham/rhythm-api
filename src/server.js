@@ -11,6 +11,7 @@ import usersPlugin from './api/users/index.js';
 import authenticationsPlugin from './api/authentications/index.js';
 import playlistsPlugin from './api/playlists/index.js';
 import collaborationsPlugin from './api/collaborations/index.js';
+import activitiesPlugin from './api/activities/index.js';
 
 // Impor Service & Validator
 import AlbumsService from './services/postgres/AlbumsService.js';
@@ -28,6 +29,7 @@ import CollaborationsService from './services/postgres/CollaborationsService.js'
 import CollaborationsValidator from './validators/collaborations/index.js';
 import PlaylistActivitiesService from './services/postgres/PlaylistActivitiesService.js';
 
+
 const init = async () => {
   // Bikin instance service
   const collaborationsService = new CollaborationsService();
@@ -36,7 +38,7 @@ const init = async () => {
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
   const activitiesService = new PlaylistActivitiesService();
-  const playlistsService = new PlaylistsService(collaborationsService, activitiesService);
+  const playlistsService = new PlaylistsService(collaborationsService);
 
   const server = Hapi.server({
     port: process.env.PORT || 5000,
@@ -63,9 +65,15 @@ const init = async () => {
         return newResponse;
       }
 
-      // Kalo errornya bukan dari server (kayak 404), biarin Hapi yang urus
+      // Kalo errornya bukan dari server (kayak 404 bawaan Hapi)
+      // Ini penting buat nangkep error rute-tidak-ditemukan
       if (!response.isServer) {
-        return h.continue;
+        const newResponse = h.response({
+          status: 'fail',
+          message: response.message,
+        });
+        newResponse.code(response.output.statusCode);
+        return newResponse;
       }
 
       // Kalo servernya yang gagal (500)
@@ -152,6 +160,13 @@ const init = async () => {
       collaborationsService,
       playlistsService,
       validator: CollaborationsValidator,
+    },
+  },
+  {
+    plugin: activitiesPlugin,
+    options: {
+      playlistsService,
+      activitiesService,
     },
   },
   ]);

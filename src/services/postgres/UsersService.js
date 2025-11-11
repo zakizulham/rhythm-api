@@ -2,6 +2,7 @@
 import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt';
 import InvariantError from '../../exceptions/InvariantError.js';
+import AuthenticationError from '../../exceptions/AuthenticationError.js';
 import NotFoundError from '../../exceptions/NotFoundError.js';
 import pool from './Pool.js';
 
@@ -44,7 +45,7 @@ class UsersService {
     return result.rows[0].id;
   }
 
-  // (Kita tambahin ini buat dipake di 'authentications' nanti)
+  // Verifikasi kredensial user (buat login)
   async verifyUserCredential(username, password) {
     const query = {
       text: 'SELECT id, password FROM users WHERE username = $1',
@@ -53,7 +54,7 @@ class UsersService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new NotFoundError('Kredensial yang Anda berikan salah');
+      throw new AuthenticationError('Kredensial yang Anda berikan salah');
     }
 
     const { id, password: hashedPassword } = result.rows[0];
@@ -62,7 +63,7 @@ class UsersService {
     const match = await bcrypt.compare(password, hashedPassword);
 
     if (!match) {
-      throw new InvariantError('Kredensial yang Anda berikan salah');
+      throw new AuthenticationError('Kredensial yang Anda berikan salah');
     }
     return id; // Kalo bener, balikin ID user
   }
