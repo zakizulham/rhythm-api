@@ -1,8 +1,5 @@
 // migrations/1700000000001_create-all-tables.js
 
-/* eslint-disable camelcase */
-// Nonaktifkan camelcase untuk file ini karena kita menggunakan snake_case untuk Foreign Keys
-
 export const up = (pgm) => {
   // Tabel users
   pgm.createTable('users', {

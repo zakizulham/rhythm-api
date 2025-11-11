@@ -3,7 +3,6 @@ import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt';
 import InvariantError from '../../exceptions/InvariantError.js';
 import AuthenticationError from '../../exceptions/AuthenticationError.js';
-import NotFoundError from '../../exceptions/NotFoundError.js';
 import pool from './Pool.js';
 
 class UsersService {
