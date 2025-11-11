@@ -26,6 +26,7 @@ import PlaylistsService from './services/postgres/PlaylistsService.js';
 import PlaylistsValidator from './validators/playlists/index.js'; 
 import CollaborationsService from './services/postgres/CollaborationsService.js'; 
 import CollaborationsValidator from './validators/collaborations/index.js';
+import PlaylistActivitiesService from './services/postgres/PlaylistActivitiesService.js';
 
 const init = async () => {
   // Bikin instance service
@@ -34,7 +35,8 @@ const init = async () => {
   const songsService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
-  const playlistsService = new PlaylistsService(collaborationsService);
+  const activitiesService = new PlaylistActivitiesService();
+  const playlistsService = new PlaylistsService(collaborationsService, activitiesService);
 
   const server = Hapi.server({
     port: process.env.PORT || 5000,
@@ -141,6 +143,7 @@ const init = async () => {
     options: {
       service: playlistsService,
       validator: PlaylistsValidator,
+      activitiesService: activitiesService,
     },
   },
   {

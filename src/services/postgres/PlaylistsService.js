@@ -8,7 +8,7 @@ import pool from './Pool.js';
 class PlaylistsService {
   constructor(collaborationService) {
     this._pool = pool;
-    this._collaborationService = collaborationService; // Untuk Kriteria Opsional
+    this._collaborationService = collaborationService; 
   }
 
   // Nambah playlist baru

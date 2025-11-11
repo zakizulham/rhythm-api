@@ -5,8 +5,8 @@ import routes from './routes.js';
 const playlistsPlugin = {
   name: 'playlists',
   version: '1.0.0',
-  register: async (server, { service, validator }) => {
-    const playlistsHandler = new PlaylistsHandler(service, validator);
+  register: async (server, { service, validator, activitiesService }) => {
+    const playlistsHandler = new PlaylistsHandler(service, validator, activitiesService);
     server.route(routes(playlistsHandler));
   },
 };
