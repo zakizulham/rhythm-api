@@ -10,6 +10,7 @@ import songsPlugin from './api/songs/index.js';
 import usersPlugin from './api/users/index.js';
 import authenticationsPlugin from './api/authentications/index.js';
 import playlistsPlugin from './api/playlists/index.js';
+import collaborationsPlugin from './api/collaborations/index.js';
 
 // Impor Service & Validator
 import AlbumsService from './services/postgres/AlbumsService.js';
@@ -24,6 +25,7 @@ import TokenManager from './tokenize/TokenManager.js';
 import PlaylistsService from './services/postgres/PlaylistsService.js'; 
 import PlaylistsValidator from './validators/playlists/index.js'; 
 import CollaborationsService from './services/postgres/CollaborationsService.js'; 
+import CollaborationsValidator from './validators/collaborations/index.js';
 
 const init = async () => {
   // Bikin instance service
@@ -139,6 +141,14 @@ const init = async () => {
     options: {
       service: playlistsService,
       validator: PlaylistsValidator,
+    },
+  },
+  {
+    plugin: collaborationsPlugin,
+    options: {
+      collaborationsService,
+      playlistsService,
+      validator: CollaborationsValidator,
     },
   },
   ]);
