@@ -5,14 +5,18 @@ import ClientError from './exceptions/ClientError.js';
 
 // Impor Plugin
 import albumsPlugin from './api/albums/index.js';
+import songsPlugin from './api/songs/index.js';
 
 // Impor Service & Validator
 import AlbumsService from './services/postgres/AlbumsService.js';
 import AlbumsValidator from './validators/albums/index.js';
+import SongsService from './services/postgres/SongsService.js'; 
+import SongsValidator from './validators/songs/index.js'; 
 
 const init = async () => {
   // Bikin instance service
   const albumsService = new AlbumsService();
+  const songsService = new SongsService();
 
   const server = Hapi.server({
     port: process.env.PORT || 5000,
@@ -59,13 +63,22 @@ const init = async () => {
   });
 
   // Daftarin plugin albums
-  await server.register({
+  await server.register([
+  {
     plugin: albumsPlugin,
     options: {
       service: albumsService,
       validator: AlbumsValidator,
     },
-  });
+  },
+  {
+    plugin: songsPlugin,
+    options: {
+      service: songsService,
+      validator: SongsValidator,
+    },
+  },
+  ]);
 
   await server.start();
   console.log(`Server nyala di ${server.info.uri}`);
