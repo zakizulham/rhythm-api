@@ -3,7 +3,17 @@ import 'dotenv/config';
 import Hapi from '@hapi/hapi';
 import ClientError from './exceptions/ClientError.js';
 
+// Impor Plugin
+import albumsPlugin from './api/albums/index.js';
+
+// Impor Service & Validator
+import AlbumsService from './services/postgres/AlbumsService.js';
+import AlbumsValidator from './validators/albums/index.js';
+
 const init = async () => {
+  // Bikin instance service
+  const albumsService = new AlbumsService();
+
   const server = Hapi.server({
     port: process.env.PORT || 5000,
     host: process.env.HOST || 'localhost',
@@ -46,6 +56,15 @@ const init = async () => {
 
     // Kalo aman, lanjutin aja
     return h.continue;
+  });
+
+  // Daftarin plugin albums
+  await server.register({
+    plugin: albumsPlugin,
+    options: {
+      service: albumsService,
+      validator: AlbumsValidator,
+    },
   });
 
   await server.start();
