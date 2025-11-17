@@ -25,7 +25,7 @@ API ini dirancang menggunakan arsitektur berlapis (*layered architecture*) yang 
 
 ## Fitur & Endpoint
 
-### Kriteria Wajib (V1 & V2)
+### Kriteria Dasar
 * **Users (`/users`):**
     * `POST /users`: Registrasi pengguna baru (dengan *hashing* password `bcrypt`).
 * **Authentications (`/authentications`):**
@@ -45,7 +45,7 @@ API ini dirancang menggunakan arsitektur berlapis (*layered architecture*) yang 
     * `GET`: Melihat daftar lagu di *playlist* (otorisasi pemilik/kolaborator).
     * `DELETE`: Menghapus lagu dari *playlist* (otorisasi pemilik/kolaborator).
 
-### Kriteria Opsional
+### Kriteria Lanjut
 * **Pencarian Lagu (V1):** `GET /songs` mendukung *query parameters* `?title=` dan `?performer=`.
 * **Detail Album (V1):** `GET /albums/{id}` secara otomatis menyertakan daftar lagu (`songs`) yang ada di dalam album tersebut.
 * **Kolaborasi (V2):**
