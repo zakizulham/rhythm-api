@@ -1,8 +1,9 @@
 // src/api/playlists/handler.js
 class PlaylistsHandler {
-  constructor(service, validator) {
+  constructor(service, validator, activitiesService) {
     this._service = service;
     this._validator = validator;
+    this._activitiesService = activitiesService;
   }
 
   // Nambah playlist
@@ -61,6 +62,8 @@ class PlaylistsHandler {
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
     await this._service.addSongToPlaylist(playlistId, songId, credentialId);
 
+    await this._activitiesService.addActivity(playlistId, songId, credentialId, 'add');
+
     const response = h.response({
       status: 'success',
       message: 'Lagu berhasil ditambahkan ke playlist',
@@ -98,6 +101,22 @@ class PlaylistsHandler {
     return {
       status: 'success',
       message: 'Lagu berhasil dihapus dari playlist',
+    };
+  }
+
+  async getPlaylistActivitiesHandler(request) {
+    const { id: playlistId } = request.params;
+    const { id: credentialId } = request.auth.credentials;
+
+    await this._service.verifyPlaylistAccess(playlistId, credentialId);
+    const activities = await this._activitiesService.getActivities(playlistId);
+
+    return {
+      status: 'success',
+      data: {
+        playlistId,
+        activities,
+      },
     };
   }
 }

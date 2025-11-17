@@ -152,6 +152,7 @@ const init = async () => {
     options: {
       service: playlistsService,
       validator: PlaylistsValidator,
+      activitiesService: activitiesService,
     },
   },
   {
@@ -161,13 +162,6 @@ const init = async () => {
       playlistsService,
       usersService: usersService,
       validator: CollaborationsValidator,
-    },
-  },
-  {
-    plugin: activitiesPlugin,
-    options: {
-      playlistsService,
-      activitiesService,
     },
   },
   ]);
