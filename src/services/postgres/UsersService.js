@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt';
 import InvariantError from '../../exceptions/InvariantError.js';
 import AuthenticationError from '../../exceptions/AuthenticationError.js';
+import NotFoundError from '../../exceptions/NotFoundError.js';
 import pool from './Pool.js';
 
 class UsersService {
@@ -65,6 +66,19 @@ class UsersService {
       throw new AuthenticationError('Kredensial yang Anda berikan salah');
     }
     return id; // Kalo bener, balikin ID user
+  }
+
+  async getUserById(userId) {
+    const query = {
+      text: 'SELECT id FROM users WHERE id = $1',
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('User tidak ditemukan');
+    }
   }
 }
 

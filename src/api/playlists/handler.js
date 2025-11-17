@@ -1,9 +1,8 @@
 // src/api/playlists/handler.js
 class PlaylistsHandler {
-  constructor(service, validator, activitiesService) {
+  constructor(service, validator) {
     this._service = service;
     this._validator = validator;
-    this._activitiesService = activitiesService;
   }
 
   // Nambah playlist
@@ -62,9 +61,6 @@ class PlaylistsHandler {
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
     await this._service.addSongToPlaylist(playlistId, songId, credentialId);
 
-    // Catet aktivitasnya dari handler
-    await this._activitiesService.addActivity(playlistId, songId, credentialId, 'add');
-
     const response = h.response({
       status: 'success',
       message: 'Lagu berhasil ditambahkan ke playlist',
@@ -99,31 +95,9 @@ class PlaylistsHandler {
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
     await this._service.deleteSongFromPlaylist(playlistId, songId, credentialId);
 
-    // Catet aktivitasnya dari handler
-    await this._activitiesService.addActivity(playlistId, songId, credentialId, 'delete');
-
     return {
       status: 'success',
       message: 'Lagu berhasil dihapus dari playlist',
-    };
-  }
-
-  // Handler buat ngambil activities
-  async getPlaylistActivitiesHandler(request) {
-    const { id: playlistId } = request.params;
-    const { id: credentialId } = request.auth.credentials;
-
-    // Cek akses dulu
-    await this._service.verifyPlaylistAccess(playlistId, credentialId);
-    // Ambil data activities
-    const activities = await this._activitiesService.getActivities(playlistId);
-
-    return {
-      status: 'success',
-      data: {
-        playlistId,
-        activities,
-      },
     };
   }
 }

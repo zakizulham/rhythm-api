@@ -120,6 +120,7 @@ const init = async () => {
     plugin: albumsPlugin,
     options: {
       service: albumsService,
+      songsService: songsService,
       validator: AlbumsValidator,
     },
   },
@@ -151,7 +152,6 @@ const init = async () => {
     options: {
       service: playlistsService,
       validator: PlaylistsValidator,
-      activitiesService: activitiesService,
     },
   },
   {
@@ -159,6 +159,7 @@ const init = async () => {
     options: {
       collaborationsService,
       playlistsService,
+      usersService: usersService,
       validator: CollaborationsValidator,
     },
   },

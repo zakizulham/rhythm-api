@@ -33,7 +33,7 @@ class PlaylistActivitiesService {
              JOIN users u ON psa.user_id = u.id
              JOIN songs s ON psa.song_id = s.id
              WHERE psa.playlist_id = $1
-             ORDER BY psa.time ASC`, // Diurutin berdasarkan waktu
+             ORDER BY psa.time ASC`,
       values: [playlistId],
     };
 

@@ -11,16 +11,7 @@ class CollaborationsService {
 
   // Nambah kolaborator
   async addCollaboration(playlistId, userId) {
-    // Cek dulu user-nya ada apa ngga
-    const userQuery = {
-      text: 'SELECT id FROM users WHERE id = $1',
-      values: [userId],
-    };
-    const userResult = await this._pool.query(userQuery);
-    if (!userResult.rowCount) {
-      throw new NotFoundError('User tidak ditemukan');
-    }
-
+    
     const id = `collab-${nanoid(16)}`;
     const query = {
       text: 'INSERT INTO collaborations VALUES($1, $2, $3) RETURNING id',
@@ -28,6 +19,7 @@ class CollaborationsService {
     };
 
     const result = await this._pool.query(query);
+
     if (!result.rows[0].id) {
       throw new InvariantError('Kolaborasi gagal ditambahkan');
     }

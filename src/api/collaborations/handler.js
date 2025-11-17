@@ -1,8 +1,9 @@
 // src/api/collaborations/handler.js
 class CollaborationsHandler {
-  constructor(collaborationsService, playlistsService, validator) {
+  constructor(collaborationsService, playlistsService, usersService, validator) {
     this._collaborationsService = collaborationsService;
     this._playlistsService = playlistsService;
+    this._usersService = usersService;
     this._validator = validator;
   }
 
@@ -11,9 +12,13 @@ class CollaborationsHandler {
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
 
-    // Cek kepemilikan playlist
+    // Cek dulu, apakah user ini owner dari playlist yang mau diajak kolab
     await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
     
+    // Cek user yang mau diajak collab (Pake UsersService)
+    await this._usersService.getUserById(userId);
+
+    // Baru tambah collab
     const collaborationId = await this._collaborationsService.addCollaboration(playlistId, userId);
 
     const response = h.response({

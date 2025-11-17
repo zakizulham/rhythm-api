@@ -25,34 +25,19 @@ class AlbumsService {
     return result.rows[0].id;
   }
 
-  // --- INI FUNGSI YANG KITA MODIFIKASI ---
   async getAlbumById(id) {
-    // 1. Ambil data albumnya dulu
-    const albumQuery = {
+    const query = {
       text: 'SELECT id, name, year FROM albums WHERE id = $1',
       values: [id],
     };
-    const albumResult = await this._pool.query(albumQuery);
+    const result = await this._pool.query(query);
 
-    if (!albumResult.rowCount) {
+    if (!result.rowCount) {
       throw new NotFoundError('Album tidak ditemukan');
     }
 
-    // 2. Ambil semua lagu yang ada di album itu
-    // (sesuai Kriteria Opsional 1, cuma butuh id, title, performer)
-    const songsQuery = {
-      text: 'SELECT id, title, performer FROM songs WHERE album_id = $1',
-      values: [id],
-    };
-    const songsResult = await this._pool.query(songsQuery);
-
-    // 3. Gabungin datanya jadi satu objek
-    const album = albumResult.rows[0];
-    album.songs = songsResult.rows; // Tambahin array 'songs' ke objek 'album'
-
-    return album;
+    return result.rows[0];
   }
-  // --- BATAS MODIFIKASI ---
 
   async editAlbumById(id, { name, year }) {
     const query = {
