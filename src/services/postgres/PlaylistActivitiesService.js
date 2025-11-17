@@ -8,7 +8,6 @@ class PlaylistActivitiesService {
     this._pool = pool;
   }
 
-  // Nyatet aktivitas (nambah/hapus lagu)
   async addActivity(playlistId, songId, userId, action) {
     const id = `activity-${nanoid(16)}`;
     const time = new Date().toISOString();
@@ -25,15 +24,14 @@ class PlaylistActivitiesService {
     }
   }
 
-  // Ngambil daftar aktivitas buat playlist tertentu
   async getActivities(playlistId) {
     const query = {
-      text: `SELECT u.username, s.title, psa.action, psa.time
-             FROM playlist_song_activities psa
-             JOIN users u ON psa.user_id = u.id
-             JOIN songs s ON psa.song_id = s.id
-             WHERE psa.playlist_id = $1
-             ORDER BY psa.time ASC`,
+      text: `SELECT users.username, songs.title, playlist_song_activities.action, playlist_song_activities.time
+             FROM playlist_song_activities
+             LEFT JOIN users ON playlist_song_activities.user_id = users.id
+             LEFT JOIN songs ON playlist_song_activities.song_id = songs.id
+             WHERE playlist_song_activities.playlist_id = $1
+             ORDER BY playlist_song_activities.time ASC`,
       values: [playlistId],
     };
 
