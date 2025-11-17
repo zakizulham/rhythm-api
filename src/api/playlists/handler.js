@@ -98,6 +98,8 @@ class PlaylistsHandler {
     await this._service.verifyPlaylistAccess(playlistId, credentialId);
     await this._service.deleteSongFromPlaylist(playlistId, songId, credentialId);
 
+    await this._activitiesService.addActivity(playlistId, songId, credentialId, 'delete');
+
     return {
       status: 'success',
       message: 'Lagu berhasil dihapus dari playlist',
