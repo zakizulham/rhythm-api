@@ -45,7 +45,7 @@ API ini dirancang menggunakan arsitektur berlapis (*layered architecture*) yang 
     * `GET`: Melihat daftar lagu di *playlist* (otorisasi pemilik/kolaborator).
     * `DELETE`: Menghapus lagu dari *playlist* (otorisasi pemilik/kolaborator).
 
-### Kriteria Opsional (Bernilai Tinggi)
+### Kriteria Opsional
 * **Pencarian Lagu (V1):** `GET /songs` mendukung *query parameters* `?title=` dan `?performer=`.
 * **Detail Album (V1):** `GET /albums/{id}` secara otomatis menyertakan daftar lagu (`songs`) yang ada di dalam album tersebut.
 * **Kolaborasi (V2):**
@@ -107,7 +107,7 @@ npm run start-dev
 npm run lint
 
 # 8. Menjalankan tes otomatisasi API
-# - Impor collection Postman "OpenMusic API V2 Test.zip" (dari instruksi)
+# - Impor collection Postman "OpenMusic API V2 Test.zip"
 # - Set environment "OpenMusic API Test"
 # - Jalankan Collection Runner.
 ```
